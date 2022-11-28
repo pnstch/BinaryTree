@@ -1,108 +1,53 @@
 ﻿#pragma once
-#include <iostream>
+#include <queue>
 #include <queue>
 #include <clocale>
+#include <sstream>
+#include <iostream>
+
 #include "BinaryTree.h"
-
-
-
-int main()
-{
-    setlocale(LC_CTYPE, "rus");
-    binaryTree myTree;
-    //choice - выбор для case
-    int choice;
-    while (1)
-    {
-        //Меню
-        menu:
-        cout << "Бинарное дерево" << endl
-            << "Меню" << endl
-            << "---------------" << endl;
-        cout << "1. Вставить элемент" << endl
-            << "2. Удалить дерево" << endl
-            << "3. Вывести дерево" << endl
-            << "4. Выход" << endl;
-        cout << "Введите ваш выбор: ";
-        cin >> choice;
-        //проверка вводимых данных
-        if (!cin)
-        {
-            cin.clear();
-            cin.ignore();
-            cout << "Введите число повторно" << endl
-                << endl;
-        }
-        else
-        {
-            switch (choice)
-            {
-            case 1:
-                int key;
-                cout << "Введите число для вставки: ";
-                cin >> key;
-                myTree.insert(key);
-                cout << endl;
-                goto menu;
-            case 2:
-                myTree.deleteTree();
-                cout << "Дерерво удалено" << endl;
-                goto menu;
-            case 3:
-                myTree.printTree();
-                goto menu;
-            
-            case 4:
-                exit(0);
-                break;
-            default:
-                cout << "Проверьте ввод" << endl
-                    << endl;
-                goto menu;
-            }
-        }
-    }
-    return 0;
-}
 
 
 /**
     * \brief Конструктор
-    * \*param root Корень дерева
-    */
-binaryTree::binaryTree()
+    * \param root Корень дерева
+*/
+BinaryTree::BinaryTree() : root(nullptr)
 {
     root = nullptr;
 }
+
 
 /**
     * \brief Деструктор, вызывает рекурсивную функцию удаления дерева
-    * \*param root Корень дерева
-    */
-binaryTree::~binaryTree()
+    * \param root Корень дерева
+*/
+BinaryTree::~BinaryTree()
 {
     deleteTree(root);
 }
 
+
 /**
     * \brief публичная функция, позволяющая удалить все дерево, вызывает приватную рекурсивную функцию с доступом к корню
-    * \*param root Корень дерева
-    */
-void binaryTree::deleteTree()
+    * \param root Корень дерева
+*/
+void BinaryTree::deleteTree()
 {
     deleteTree(root);
     root = nullptr;
 }
 
+
 /**
     * \brief Рекурсивная функция для удаления дерева
-    * \*param leaf Лист дерева
-     * \l - левый
-    *\ r - правый
-    */
-void binaryTree::deleteTree(btnode* leaf)
+    * \param leaf Лист дерева
+    * \l - левый
+    * \r - правый
+*/
+void BinaryTree::deleteTree(btnode* leaf)
 {
-    if (leaf)
+    if (leaf != nullptr)
     {
         deleteTree(leaf->l);
         deleteTree(leaf->r);
@@ -110,47 +55,57 @@ void binaryTree::deleteTree(btnode* leaf)
     }
 }
 
+
 /**
-    * \публичная функция, позволяющая вставлять данные в дерево, вызывает приватную рекурсивную функцию с доступом к корневому узлу
-    * \*param root Корень дерева
-    * \*param key Ключ
-    */
-void binaryTree::insert(int key)
+    * \brief Функция возвращает заполненность дерева
+    * \return bool - заполненность дерева
+*/
+bool BinaryTree::IsEmpty()   {
+    return this->root == nullptr;
+}
+
+
+/**
+    * \brief публичная функция, позволяющая вставлять данные в дерево, вызывает приватную рекурсивную функцию с доступом к корневому узлу
+    * \param root Корень дерева
+    * \param key Ключ
+*/
+void BinaryTree::insert(int key)
 {
     insert(key, root);
 }
 
 
 /**
-    * \приватная рекурсивная функция с доступом к корневому узлу
-    * \*param root Корень дерева
-     * \*param leaf Лист дерева
-    * \*param key Ключ
-    * \*param data Данные
+    * \brief приватная рекурсивная функция с доступом к корневому узлу
+    * \param root Корень дерева
+    * \param leaf Лист дерева
+    * \param key Ключ
+    * \param data Данные
     * \l - левый
-    *\ r - правый
-    */
-void binaryTree::insert(int key, btnode* leaf)
+    * \r - правый
+*/
+void BinaryTree::insert(int key, btnode* leaf)
 {
-    //создание корневой ноды
-    if (!root)
+    // Cоздание корневой ноды
+    if (root == nullptr)
     {
         root = new btnode;
         root->data = key;
         root->l = root->r = nullptr;
     }
-    //создание ноды
+    // Cоздание ноды
     else
     {
-        //проверка наличия информации слева
+        // Проверка наличия информации слева
         if (key < leaf->data)
         {
-            //проверка левого узла. если он есть-вызываем рекурсивную функцию
+            // Проверка левого узла. если он есть-вызываем рекурсивную функцию
             if (leaf->l)
             {
                 insert(key, leaf->l);
             }
-            //если нет левой ноды-создаём её
+            // Если нет левой ноды-создаём её
             else
             {
                 leaf->l = new btnode;
@@ -158,15 +113,15 @@ void binaryTree::insert(int key, btnode* leaf)
                 leaf->l->l = leaf->l->r = nullptr;
             }
         }
-        //проверка наличия информации справа
+        // Проверка наличия информации справа
         else
         {
-            //проверка правого узла. если он есть-вызываем рекурсивную функцию
+            // Проверка правого узла. если он есть-вызываем рекурсивную функцию
             if (leaf->r)
             {
                 insert(key, leaf->r);
             }
-            //если нет правой ноды-создаём её
+            // Если нет правой ноды-создаём её
             else
             {
                 leaf->r = new btnode;
@@ -177,35 +132,18 @@ void binaryTree::insert(int key, btnode* leaf)
     }
 }
 
-/**
-    * \публичная функция печати дерева
-    * \*param root Корень дерева
-    */
-void binaryTree::printTree()
-{
-    printTree(root);
-}
 
-/**
-    * \приватная функция печати дерева
-    * \*param root Корень дерева
-     * \*param leaf Лист дерева
-    * \* Использует очередь, чтобы распознать ноды и распечатать их
-    * \l - левый
-    *\ r - правый
-    */
-
-//private member function that prints the tree with depth.
-//uses a queue to recognize nodes and print them
-void binaryTree::printTree(btnode* leaf)
+std::ostream& operator<<(std::ostream& out, BinaryTree& tree)
 {
-    if (!root)
+    if (tree.IsEmpty())
     {
-        return;
+        return out << "{}";
     }
     queue<btnode*> q;
-    q.push(root);
+
+    q.push(tree.root);
     //run until all nodes have been printed
+    out << "{";
     while (!q.empty())
     {
         int nodeCount = q.size();
@@ -213,7 +151,7 @@ void binaryTree::printTree(btnode* leaf)
         while (nodeCount > 0)
         {
             btnode* leaf = q.front();
-            cout << leaf->data << " ";
+            out << leaf->data << ", ";
             q.pop();
             //add to the queue if a left node exists
             if (leaf->l)
@@ -228,44 +166,6 @@ void binaryTree::printTree(btnode* leaf)
             //remove count on the node popped
             nodeCount--;
         }
-        cout << endl;
     }
-}
-
-/**
-    * \brief Рекурсивная функция поиска по дереву
-    * \*param root Корень дерева
-     * \*param leaf Лист дерева
-    * \*param key Ключ
-    * \*param data Данные
-    * \l - левый
-    *\ r - правый
-    * \ return nullptr или найденный элемент
-    */
-btnode* binaryTree::search(int key, btnode* leaf)
-{
-    //если нода существует
-    if (leaf)
-    {
-        //если ключ равен ноде, вернуть ноду
-        if (key == leaf->data)
-        {
-            return leaf;
-        }
-        //если ключ меньше, чем нода, проверяем левую ноду
-        if (key < leaf->data)
-        {
-            return search(key, leaf->l);
-        }
-        //если ключ больше, чем нода, проверяем правую ноду
-        else
-        {
-            return search(key, leaf->r);
-        }
-    }
-    //если нет ноды-возвращает nullptr
-    else
-    {
-        return nullptr;
-    }
+    return out << "\b\b}\n";
 }
