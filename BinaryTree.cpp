@@ -14,7 +14,6 @@
 */
 BinaryTree::BinaryTree() : root(nullptr)
 {
-    root = nullptr;
 }
 
 
@@ -35,22 +34,21 @@ BinaryTree::~BinaryTree()
 void BinaryTree::deleteTree()
 {
     deleteTree(root);
-    root = nullptr;
 }
 
 
 /**
     * \brief Рекурсивная функция для удаления дерева
     * \param leaf Лист дерева
-    * \l - левый
-    * \r - правый
+    * \lha - левый
+    * \rha - правый
 */
 void BinaryTree::deleteTree(btnode* leaf)
 {
     if (leaf != nullptr)
     {
-        deleteTree(leaf->l);
-        deleteTree(leaf->r);
+        deleteTree(leaf->lha);
+        deleteTree(leaf->rha);
         delete leaf;
     }
 }
@@ -82,8 +80,8 @@ void BinaryTree::insert(int key)
     * \param leaf Лист дерева
     * \param key Ключ
     * \param data Данные
-    * \l - левый
-    * \r - правый
+    * \lha - левый
+    * \rha - правый
 */
 void BinaryTree::insert(int key, btnode* leaf)
 {
@@ -92,7 +90,7 @@ void BinaryTree::insert(int key, btnode* leaf)
     {
         root = new btnode;
         root->data = key;
-        root->l = root->r = nullptr;
+        root->lha = root->rha = nullptr;
     }
     // Cоздание ноды
     else
@@ -101,32 +99,32 @@ void BinaryTree::insert(int key, btnode* leaf)
         if (key < leaf->data)
         {
             // Проверка левого узла. если он есть-вызываем рекурсивную функцию
-            if (leaf->l)
+            if (leaf->lha)
             {
-                insert(key, leaf->l);
+                insert(key, leaf->lha);
             }
             // Если нет левой ноды-создаём её
             else
             {
-                leaf->l = new btnode;
-                leaf->l->data = key;
-                leaf->l->l = leaf->l->r = nullptr;
+                leaf->lha = new btnode;
+                leaf->lha->data = key;
+                leaf->lha->lha = leaf->lha->rha = nullptr;
             }
         }
         // Проверка наличия информации справа
         else
         {
             // Проверка правого узла. если он есть-вызываем рекурсивную функцию
-            if (leaf->r)
+            if (leaf->rha)
             {
-                insert(key, leaf->r);
+                insert(key, leaf->rha);
             }
             // Если нет правой ноды-создаём её
             else
             {
-                leaf->r = new btnode;
-                leaf->r->data = key;
-                leaf->r->l = leaf->r->r = nullptr;
+                leaf->rha = new btnode;
+                leaf->rha->data = key;
+                leaf->rha->lha = leaf->rha->rha = nullptr;
             }
         }
     }
@@ -154,14 +152,14 @@ std::ostream& operator<<(std::ostream& out, BinaryTree& tree)
             out << leaf->data << ", ";
             q.pop();
             //add to the queue if a left node exists
-            if (leaf->l)
+            if (leaf->lha)
             {
-                q.push(leaf->l);
+                q.push(leaf->lha);
             }
             //add to the queue if a right node exists
-            if (leaf->r)
+            if (leaf->rha)
             {
-                q.push(leaf->r);
+                q.push(leaf->rha);
             }
             //remove count on the node popped
             nodeCount--;
